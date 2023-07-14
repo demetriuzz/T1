@@ -17,6 +17,7 @@ repositories {
 
 ext {
     // https://docs.spring.io/spring-boot/docs/2.7.3/reference/htmlsingle/#appendix.dependency-versions.properties
+    set('testcontainersVersion', '1.17.6')
 }
 
 dependencies {
@@ -36,7 +37,10 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    testImplementation 'org.assertj:assertj-core:3.19.0'
+    // ? testImplementation 'org.assertj:assertj-core:3.19.0'
+    testImplementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
+    testImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
+    // ? testImplementation "org.testcontainers:kafka:${testcontainersVersion}"
 }
 
 tasks.named('test') {

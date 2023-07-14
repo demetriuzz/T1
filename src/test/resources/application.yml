@@ -1,0 +1,8 @@
+spring:
+  liquibase:
+    enabled: false
+    default-schema: t1_schema
+    liquibase-schema: t1_schema
+    change-log: classpath:db/changelog/liquibase-changelog.xml
+  datasource:
+    url: jdbc:tc:postgresql:latest://testcontainers/note
