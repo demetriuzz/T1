@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.7.13'
+    id 'org.springframework.boot' version '2.7.3'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
@@ -15,9 +15,28 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    // https://docs.spring.io/spring-boot/docs/2.7.3/reference/htmlsingle/#appendix.dependency-versions.properties
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'org.postgresql:postgresql:42.2.14'
+    implementation 'org.liquibase:liquibase-core'
+    // ? jooqGenerator 'org.postgresql:postgresql:42.2.14'
+
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.apache.kafka:kafka-clients:2.8.1'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.assertj:assertj-core:3.19.0'
 }
 
 tasks.named('test') {

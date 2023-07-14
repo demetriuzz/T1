@@ -1,2 +1,6 @@
 # T1
-java + jooq + gradle
+
+- Java + Gradle + Spring Boot 2.x
+- PostgreSQL + jOOQ
+- Kafka
+- Docker + TestContainers
