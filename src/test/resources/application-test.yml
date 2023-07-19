@@ -1,3 +1,7 @@
 spring:
   datasource:
-    url: jdbc:tc:postgresql:latest://testcontainers/notes
+    url: jdbc:tc:postgresql:latest:///notes
+  liquibase:
+    enabled: true
+    default-schema:
+    liquibase-schema:
