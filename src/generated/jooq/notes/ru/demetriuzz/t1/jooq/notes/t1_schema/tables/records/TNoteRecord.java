@@ -220,4 +220,18 @@ public class TNoteRecord extends UpdatableRecordImpl<TNoteRecord> implements Rec
         setCTime(cTime);
         setCTodo(cTodo);
     }
+
+    /**
+     * Create a detached, initialised TNoteRecord
+     */
+    public TNoteRecord(ru.demetriuzz.t1.jooq.notes.t1_schema.tables.pojos.TNote value) {
+        super(TNote.T_NOTE);
+
+        if (value != null) {
+            setCId(value.getCId());
+            setCDay(value.getCDay());
+            setCTime(value.getCTime());
+            setCTodo(value.getCTodo());
+        }
+    }
 }
