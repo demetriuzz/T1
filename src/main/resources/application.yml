@@ -6,3 +6,10 @@ spring:
     default-schema: t1_schema
     liquibase-schema: t1_schema
     change-log: classpath:db/changelog/liquibase-changelog.xml
+
+logging:
+  level:
+    ru.demetriuzz.t1: INFO
+    org.jooq: WARN
+    org.testcontainers: WARN
+    com.github: WARN
