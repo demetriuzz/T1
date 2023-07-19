@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '2.7.3'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'nu.studer.jooq' version '6.0.1'
+    id 'org.liquibase.gradle' version '2.2.0'
 }
 
 group = 'ru.demetriuzz'
@@ -21,6 +22,9 @@ ext {
     set('postgresqlJdbcVersion', '42.2.14')
     set('jooqVersion', '3.15.1')
     set('testContainersVersion', '1.17.6')
+    set('dbUrl', 'jdbc:postgresql://localhost:45432/testdb')
+    set('dbUser', 'testdb')
+    set('dbPassword', 'testdb')
 }
 
 dependencies {
@@ -30,6 +34,11 @@ dependencies {
 
     implementation "org.postgresql:postgresql:${postgresqlJdbcVersion}"
     implementation 'org.liquibase:liquibase-core'
+
+    liquibaseRuntime('org.liquibase:liquibase-core:4.9.1')
+    liquibaseRuntime('javax.xml.bind:jaxb-api:2.3.1')
+    liquibaseRuntime('info.picocli:picocli:4.7.0')
+    liquibaseRuntime("org.postgresql:postgresql:${postgresqlJdbcVersion}")
     jooqGenerator "org.postgresql:postgresql:${postgresqlJdbcVersion}"
 
     implementation 'org.springframework.kafka:spring-kafka'
@@ -44,7 +53,18 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:${testContainersVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
-    // ? testImplementation "org.testcontainers:kafka:${testcontainersVersion}"
+}
+
+liquibase {
+    activities {
+        t1_migrate {
+            changelogFile "src/main/resources/db/changelog/liquibase-changelog.xml"
+            url "${dbUrl}"
+            username "${dbUser}"
+            password "${dbPassword}"
+            logLevel "info"
+        }
+    }
 }
 
 jooq {
@@ -59,20 +79,19 @@ jooq {
                 logging = org.jooq.meta.jaxb.Logging.ERROR
                 jdbc {
                     driver = 'org.postgresql.Driver'
-                    url = 'jdbc:postgresql://localhost:5432/notes'
-                    // ? driver = 'org.testcontainers.jdbc.ContainerDatabaseDriver'
-                    // ? url = 'jdbc:tc:postgresql:latest://testcontainers/notes' // System.getenv('DB_T1_JDBC_URL')
-                    user = 'postgres' // System.getenv('DB_T1_USERNAME')
-                    password = 'postgres' // System.getenv('DB_T1_PASSWORD')
+                    url = "${dbUrl}"
+                    user = "${dbUser}"
+                    password = "${dbPassword}"
                 }
-                generator{
+                generator {
                     name = 'org.jooq.codegen.JavaGenerator'
-                    database{
+                    database {
                         name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        includes = "t1_schema.*"
                     }
-                    generate{
+                    generate {
                     }
-                    target{
+                    target {
                         packageName = 'ru.demetriuzz.t1.jooq.notes'
                         directory = 'src/generated/jooq/notes'
                     }
