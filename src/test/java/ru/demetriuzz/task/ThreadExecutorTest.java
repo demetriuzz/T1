@@ -1,6 +1,7 @@
 package ru.demetriuzz.task;
 
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-public class ThreadExecutorTask {
+public class ThreadExecutorTest {
 
     private static ThreadPoolTaskExecutor executor;
 
@@ -38,11 +39,11 @@ public class ThreadExecutorTask {
 
         System.out.println("Запуск заданий");
         // порядок добавления определяет очередность выполнения
-        IntStream.rangeClosed(1, 10).forEach(n -> {
+        IntStream.rangeClosed(1, 15).forEach(n -> {
             tasks.add(executor.submit(new Task(n)));
-            System.out.printf("Задание №%d, запущено%n", n);
+            System.out.printf("Задание №%d, запущено | очередь [%d]%n", n, executor.getQueueSize());
             // замедление добавления
-            if (5 < n && n < 10) {
+            if (n < 5) {
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException e) {
@@ -55,19 +56,23 @@ public class ThreadExecutorTask {
         tasks.forEach(t -> {
             try {
                 System.out.printf(
-                        "Задание №%d, завершено | размер пула [%d] | активно заданий [%d]%n",
+                        "Задание №%d, завершено | размер пула [%d] | активно заданий [%d] | очередь [%d]%n",
                         t.get(),
                         executor.getPoolSize(),
-                        executor.getActiveCount()
+                        executor.getActiveCount(),
+                        executor.getQueueSize()
                 );
             } catch (InterruptedException | ExecutionException e) {
                 System.out.println("ошибка ожидания");
             }
         });
 
-        Assertions.assertThat(executor.getMaxPoolSize()).isEqualTo(4);
-        Assertions.assertThat(executor.getPoolSize()).isEqualTo(4);
-        Assertions.assertThat(executor.getActiveCount()).isEqualTo(0);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(executor.getMaxPoolSize()).isEqualTo(4);
+            softly.assertThat(executor.getPoolSize()).isEqualTo(4);
+            softly.assertThat(executor.getActiveCount()).isEqualTo(0);
+            softly.assertThat(executor.getQueueSize()).isEqualTo(0);
+        });
     }
 
     private record Task(
